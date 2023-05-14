@@ -1,0 +1,30 @@
+//Solution1:中心扩散法
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        if (s.length()<1){
+            return "";  //空串
+        }
+        int start=0, end=0;  //记录回文子串的起止位置
+        for(int i=0;i<s.length();i++){
+            //返回当前位置最长回文子串长度,考虑单双中心
+            int len1 = centerexpand(s, i, i);  //单中心
+            int len2 = centerexpand(s, i, i+1);  //双中心
+            int len = max(len1, len2);
+            if (len>end-start){
+                start = i - (len-1)/2;
+                end = i + len/2;
+            }
+        }
+        return s.substr(start, end-start+1);
+
+    }
+    int centerexpand(string s, int left, int right){
+        int l = left, r = right;
+        while(l>=0 && r<s.length() && s[l]==s[r]){
+            l--;
+            r++;
+        }
+        return r-l-1;  //从下标0开始，按该式计算结果正确
+    }
+};
