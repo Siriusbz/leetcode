@@ -60,3 +60,96 @@ public:
         return l3->next;
     }
 };
+
+/*********************************************************************************/
+/*********************************************************************************/
+/*********************************************************************************/
+// Solution2:add directly
+class Solution {
+public:
+    ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
+        //不补0
+        int len1 = 1;
+        int len2 = 1;
+        ListNode* p = l1;
+        ListNode* q = l2;
+        while (p->next!=nullptr){
+            len1 += 1;
+            p = p->next;
+        }
+        while (q->next!=nullptr){
+            len2 += 1;
+            q = q->next;
+        }
+        p = l1;
+        q = l2;
+        //对应项相加，考虑进位
+        bool c = false;
+        int s = 0;
+        ListNode* l3 = new ListNode(-1);
+        ListNode* w = l3;
+        if (len1<len2){
+            for(int i=1;i<=len1;i++){
+                s = c + p->val + q->val;
+                w->next = new ListNode(s%10);
+                c = s>=10?true:false;
+                q = q->next;
+                w = w->next;
+                if (p->next!=nullptr){
+                    p = p->next;
+                }
+            }
+            if (!c){
+                for(int j=len1+1;j<=len2;j++){
+                    w->next = new ListNode(q->val);
+                    w = w->next;
+                    q = q->next;
+                }
+            }
+            else{
+                for(int j=len1+1;j<=len2;j++){
+                    w->next = new ListNode((q->val+c)%10);
+                    c = (q->val+c)>=10?true:false;
+                    w = w->next;
+                    q = q->next;
+                }
+                if (c){
+                    w->next = new ListNode(1);
+                    w = w->next;
+                }
+            }
+        }
+        else{
+            for(int i=1;i<=len2;i++){
+                s = c + p->val + q->val;
+                w->next = new ListNode(s%10);
+                c = s>=10?true:false;
+                p = p->next;
+                w = w->next;
+                if (q->next!=nullptr){
+                    q = q->next;
+                }
+            }
+            if (!c){
+                for(int j=len2+1;j<=len1;j++){
+                    w->next = new ListNode(p->val);
+                    w = w->next;
+                    p = p->next;
+                }
+            }
+            else{
+                for(int j=len2+1;j<=len1;j++){
+                    w->next = new ListNode((p->val+c)%10);
+                    c = (p->val+c)>=10?true:false;
+                    w = w->next;
+                    p = p->next;
+                }
+                if (c){
+                    w->next = new ListNode(1);
+                    w = w->next;
+                }
+            }
+        }
+        return l3->next;
+    }
+};
