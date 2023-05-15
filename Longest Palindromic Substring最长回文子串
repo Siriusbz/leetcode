@@ -1,4 +1,4 @@
-//Solution1:中心扩散法
+//Solution1:中心扩散法（快，内存消耗小）
 class Solution {
 public:
     string longestPalindrome(string s) {
@@ -26,5 +26,48 @@ public:
             r++;
         }
         return r-l-1;  //从下标0开始，按该式计算结果正确
+    }
+};
+
+//动态规划法
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        int len = s.length();
+        vector<vector<int>> dp(len, vector<int>(len));
+        if (len<2){  //如果是单字符的串，则直接返回，必是回文串
+            return s;
+        }
+        // 初始化：所有长度为 1 的子串都是回文串
+        for (int i = 0; i < len; i++) {
+            dp[i][i] = true;
+        }
+        int maxlen = 1;
+        int begin = 0;
+        for(int l=2;l<=len;l++){
+            for(int i=0;i<len;i++){
+                //l是子串长，i是串左边界，可知右边界j-i+1=l
+                int j=l+i-1;
+                if (j >= len) {  //j越界
+                    break;
+                }
+                if(s[i]!=s[j]){
+                    dp[i][j]=false;
+                }
+                else{
+                    if(j-i<3){  //s[i]=s[j]且长度为1，2，必是回文串
+                        dp[i][j]=true;
+                    }
+                    else{
+                        dp[i][j]=dp[i+1][j-1];  //如果s[i]=s[j]，则s[i,j]串是否回文由其子串决定
+                    }
+                }
+                if(dp[i][j]&&j-i+1>maxlen){
+                    maxlen = j-i+1;
+                    begin = i;
+                }
+            }
+        }
+        return s.substr(begin,maxlen);
     }
 };
