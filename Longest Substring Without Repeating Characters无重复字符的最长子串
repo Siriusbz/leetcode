@@ -26,3 +26,34 @@ public:
         return ans;
     }
 }；
+//solution2：hash map优化
+class Solution
+{
+public:
+    int lengthOfLongestSubstring(string s)
+    {
+        int start = 0;  //int start(0);
+        int end = 0;
+        int length = 0;
+        int ans = 0;
+        int len = s.size();
+        unordered_map<char, int> hash;  //类似于python的字典，由键值对组成
+        while(end<len){
+            char tmp = s[end];  //记录当前值
+            //判断tmp是否在hash表中，如果find找到tmp则会返回当前位置迭代器，否则返回hash.end()
+            //因此该条件为true表示tmp出现过
+            //hash记录tmp的最后一次出现的位置，tmp如果出现在start之后，表示存在重复。
+            //因此该条件为true表示tmp出现过
+            //整体条件为true表示tmp出现过，需要修改起始位置
+            if(hash.find(tmp)!=hash.end() && hash[tmp]>=start){  
+                start = hash[tmp] + 1;  //更新start
+                length = end - start;  //更新子串长度
+            }
+            hash[tmp] = end;  // 存储当前字符和其出现的下标
+            end++;  //右移右指针
+            length++;  //当前子串的长度加1
+            ans = max(ans,length);
+        }
+        return ans;
+    }
+};
