@@ -1,0 +1,65 @@
+/*
+字符          数值
+I             1
+V             5
+X             10
+L             50
+C             100
+D             500
+M             1000
+*/
+//输入整型数字，输出对应罗马字符
+/*
+规律：4对应IV，9对应IX，含义是5-1，10-1；400，4000，900，9000同理
+本题限制0-3999
+*/
+//解法1 定义一个数组对，用输入得数每次减数组对中比它小的最大的数，并更新，直至为0，组合对应的字符
+//定义数组对
+const pair <int, string> valueSymbols[] = {
+    //把对象转化成常量（定义常量），与define类似，但要指定类型，更加明确
+    {1000, "M"},
+    {900,  "CM"},
+    {500,  "D"},
+    {400,  "CD"},
+    {100,  "C"},
+    {90,   "XC"},
+    {50,   "L"},
+    {40,   "XL"},
+    {10,   "X"},
+    {9,    "IX"},
+    {5,    "V"},
+    {4,    "IV"},
+    {1,    "I"},
+};
+
+class Solution{
+public:
+    string intToRoman(int num){
+        string roman;  //接收返回字符串
+        for(const auto &[value, key] : valueSymbols){
+            while(num>=value){
+                num -= value;
+                roman += key;
+            }
+            if(num==0){
+                break;
+            }
+        }
+    }
+};
+
+//解法2：获得各个位的值
+//硬编码表
+const string thousand[] = {"", "M", "MM", "MMM"};
+const string hundred[] = {"","C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+const string tens[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+const string ones[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+class Solution{
+public:
+    string intToRoman(int num){
+        return thousand[num/1000]+hundred[num%1000/100]+tens[num%100/10]+ones[num%10];
+    }
+};
+
+
+
