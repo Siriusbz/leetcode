@@ -1,0 +1,61 @@
+//求两个有序数组的中位数
+/*解题思路
+假设中位数的序号为k，在两个有序数组中找各自的k/2个数，其中较小的那个数，之多有k-2个数比它小（k/2-1 + k/2-1）
+删除小数组中的前k/2-1个数，构造新的数组，再重复上述步骤，直到找到两个数组第k大的值
+*/
+class Solution{
+public:
+    double findMedianSortedArrays(const vector<int>& nums1, const vector<int>& nums2) {
+        //这里返回值应该是中位数
+        //首先判断数组总长的奇偶性，分别处理
+        int len1 = nums1.size();
+        int len2 = nums2.size();
+        int totallen = len1 + len2;
+        if(totallen % 2 == 1){
+            //奇数
+            return findkth(nums1, nums2, (totallen+1) / 2);
+        }
+        else{
+            //偶数
+            return (findkth(nums1, nums2, totallen / 2) + findkth(nums1, nums2, totallen / 2 + 1)) / 2.0;
+        }
+    }
+    int findkth(const vector <int>& nums1, const vector <int>& nums2, int k){
+        // 根据上方的调用，本方法返回的应该是找到的两个数组第k个位置的值
+        int len1 = nums1.size();
+        int len2 = nums2.size();
+        int idx1 = 0;
+        int idx2 = 0;
+        while(true){
+            //首先应判断边界条件
+            if(idx1==len1){
+                //数组1为空
+                return nums2[idx2 + k - 1];
+            }
+            if(idx2==len2){
+                //数组2为空
+                return nums1[idx1 + k - 1];
+            }
+            if(k==1){
+                //两个数组各剩一个值
+                return min(nums1[idx1], nums2[idx2]);
+            }
+            //接下来应该完成比较，更新数组的部分
+            int index1 = min(idx1 + k / 2 - 1, len1 - 1);   //获得两个数组各自的k/2个数
+            int index2 = min(idx2 + k / 2 - 1, len2 - 1);
+            int p1 = nums1[index1];
+            int p2 = nums2[index2];
+            if(p1 <= p2){
+                //根据解题思路，应该删除较小数组的k/2之前的数，更新数组
+                k -= index1 - idx1 + 1;
+                idx1 = index1 + 1;
+            }
+            else{
+                //根据解题思路，应该删除较小数组的k/2之前的数，更新数组
+                k -= index2 - idx2 + 1;
+                idx2 = index2 + 1;
+            }
+        }
+    }
+};
+
