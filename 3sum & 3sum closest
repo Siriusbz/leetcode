@@ -1,0 +1,95 @@
+//3sum
+/*题目描述：给你一个整数数组 nums ，判断是否存在三元组 [nums[i], nums[j], nums[k]] 满足 i != j、i != k 且 j != k ，
+同时还满足 nums[i] + nums[j] + nums[k] == 0 。
+请你返回所有和为 0 且不重复的三元组。
+注意：答案中不可以包含重复的三元组。*/
+/*解题思路：双指针三重枚举*/
+
+#include <algorithm>
+
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        int len = nums.size();
+        sort(nums.begin(),nums.end());   //对nums排序，后续可以判断是否重复遍历
+        vector<vector<int>> res;
+        for(int first=0;first<len;first++){
+            //判断当first大于0时，是否存在当前值与前一个值相等的情况，避免重复遍历
+            if(first>0&&nums[first]==nums[first-1]){
+                continue;
+            }
+            int third = len - 1;
+            int target = -nums[first];
+            for(int second=first+1;second<len;second++){
+                if(second>first+1&&nums[second]==nums[second-1]){
+                    continue;
+                }
+                while(second<third&&nums[second]+nums[third]>target){  //因为排序了，所以大于target时可以直接移动third指针
+                    third--;
+                }
+                if(second==third)
+                    break;
+                if(nums[second]+nums[third]==target){
+                   res.push_back({nums[first], nums[second], nums[third]});
+                }
+            }
+        }
+        return res;
+    }
+};
+
+
+//3sum closest
+/*给你一个长度为 n 的整数数组 nums 和 一个目标值 target。请你从 nums 中选出三个整数，使它们的和与 target 最接近。
+
+返回这三个数的和。
+
+假定每组输入只存在恰好一个解。
+*/
+/*解题思路：类似上方双指针方法*/
+#include <algorithm>
+#include <stdlib.h>
+
+class Solution{
+public:
+    int threeSumClosest(vector<int>& nums,int target){
+        int len = nums.size();
+        int best = 1e6;
+        sort(nums.begin(), nums.end());
+        for(int first=0;first<len;first++){
+            if(first>0&&nums[first]==nums[first-1]){
+                continue;
+            }
+            int second = first + 1;
+            int third = len-1;
+            while(second<third){
+                int ans = nums[first]+nums[second]+nums[third];
+                if(ans==target){   //恰好等于target，最接近，直接返回target
+                    return target;
+                }
+                best = upgrade(ans,target,best);  //在upgrade中判断是否更新新的更近的best
+                if(ans<target){  //如果小于target，由于提前升序排序，只需又移second即可增大ans，而左移third会减小ans
+                    int second0 = second + 1;
+                    while(second0<third&&nums[second0]==nums[second]){
+                        second0++;
+                    }
+                    second=second0;
+                }
+                else{
+                    int third0 = third - 1;
+                    while(second<third0&&nums[third]==nums[third0]){
+                        third0--;
+                    }
+                    third=third0;
+                }
+            }
+        }
+        return best;
+    }
+    int upgrade(int ans, int target, int best){  //更新best，使用绝对值判断，当前ans和历史best哪个离target更近
+        if(abs(ans-target)<abs(best-target)){
+            best = ans;
+        }
+        return best;
+    }
+};
